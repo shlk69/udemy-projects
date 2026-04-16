@@ -63,13 +63,12 @@ const userSchema = new Schema({
 
 
 //Encryption whenever password field is touched
-userSchema.pre('save', async function (next) {
-    //if password filed isn't touched anyhow 
-    if (!this.isModified('password')) return next()
+userSchema.pre('save', async function () {
+    //if password field isn't touched anyhow 
+    if (!this.isModified('password')) return 
     
     // if touched
     this.password = await bcrypt.hash(this.password, 10)
-    next()
 })
 
 //Checking password (The hashed ones)
@@ -107,7 +106,10 @@ userSchema.methods.generateRefreshToken = function () {
 userSchema.methods.generateTemporaryToken = function () {
     const unHashedToken = crypto.randomBytes(20).toString('hex')
 
-    const hashedToken = crypto.createHmac('sha256').update(unHashedToken).digest('hex')
+    const hashedToken = crypto
+        .createHmac('sha256', process.env.TEMPORARY_TOKEN_SECRET)
+        .update(unHashedToken)
+        .digest('hex')
 
     const tokenExpiry = Date.now() + (20 * 60 * 1000)
 

@@ -1,5 +1,7 @@
 import express from 'express'
 import cors from 'cors'
+import healthCheckRouter from './routes/healthCheck.routes.js'
+import authRouter from './routes/auth.routes.js'
 const app = express()
 
 
@@ -13,15 +15,13 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5173',
     credentials: true,
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders:['Content-Type','Authorization'],
+    allowedHeaders:['Caontent-Type','Authorization'],
 }))
-
-import healthCheckRouter from './routes/healthCheck.routes.js'
-
-
 
 //Health check Route
 app.use('/api/v1/healthcheck', healthCheckRouter)
+//auth route
+app.use('/api/v1/auth', authRouter)
 
 
 app.get('/', (req, res) => {
