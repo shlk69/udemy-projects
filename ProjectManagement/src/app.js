@@ -17,7 +17,7 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5173',
     credentials: true,
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders:['Caontent-Type','Authorization'],
+    allowedHeaders:['Content-Type','Authorization'],
 }))
 
 //Health check Route

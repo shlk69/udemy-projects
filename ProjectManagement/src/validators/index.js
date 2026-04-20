@@ -19,7 +19,7 @@ const userRegistrationValidator = () => {
             .withMessage('Username must be atleast 3 characters long'),
         body('password')
             .trim()
-            .isEmpty()
+            .notEmpty()
             .withMessage('Password is required')
     ]
 }

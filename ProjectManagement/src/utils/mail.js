@@ -30,8 +30,8 @@ const sendMail = async  (options) => {
         from: 'mail.taskmanager@example.com',
         to: options.email,
         subject: options.subject,
-        text: options.emailTextual,
-        html:options.emailHtml
+        text: emailTextual, 
+        html: emailHtml       
     }
 
     try {
