@@ -297,7 +297,48 @@ const forgotPassReq = asyncHandler(async (req, res) => {
 })
 
 
+//reset password
+const resetForgotPassword = asyncHandler(async (req, res) => {
+    const {resetToken} = req.params
+    const { newPassword } = req.body
+    
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+
+    const user = await User.findOen({
+        forgotPasswordToken: hashedToken,
+        forgotPasswordExpiry:{ $gt : Date.now()}
+    })
+
+    if (!user) throw new ApiError(489, 'Token expired or invalid')
+    
+    user.forgotPasswordExpiry = undefined
+    user.forgotPasswordToken = undefined
+
+    user.password = newPassword
+    await user.save({ validateBeforeSave: false })
+    
+    return res.status(200).json(new ApiResponse(
+        200, {},'New password set successfully'
+    ))
+})
 
 
 
-export default { registerUser, login, logoutUser, getCurrentUser, verifyEmail, refreshAccessToken,forgotPassReq }
+//Change Password
+const changeCurrentPassword = asyncHandler(async (req, res) => {
+    const { oldPassword, newPassword } = req.body
+    const user = await User.findById(req.user?._id)
+    const isPasswordValid = User.isPasswordCorrect(oldPassword)
+
+    if (!isPasswordValid) throw new ApiError(400, 'Old Password is incorrect')
+    
+    user.password = newPassword
+    await user.save({ validateBeforeSave: false })
+    
+    return res.status(200).json(
+        new ApiResponse(200,{},'Password changes successfully')
+    )
+})
+
+
+export default { registerUser, login, logoutUser, getCurrentUser, verifyEmail, refreshAccessToken,forgotPassReq ,resetForgotPassword,changeCurrentPassword,resendEmailVerification}
