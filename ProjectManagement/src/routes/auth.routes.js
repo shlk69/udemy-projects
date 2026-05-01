@@ -1,7 +1,7 @@
 import validate from '../middlewares/validator.middleware.js'
-import {userRegistrationValidator,userLoginValidator, userForgotPasswordValidator, userResetForgotPasswordValidator, userChangeCurrentPasswordValidator} from '../validators/index.js'
+import {userRegistrationValidator,userLoginValidator, userForgotPasswordValidator, userResetForgotPasswordValidator, userChangeCurrentPasswordValidator,createProjectValidator,addMemberToProjectValidato} from '../validators/index.js'
 import authController from '../controllers/auth.controller.js'
-import verifyJWT from '../middlewares/auth.middleware.js'
+import {verifyJWT} from '../middlewares/auth.middleware.js'
 import  Router  from 'express'
 
 

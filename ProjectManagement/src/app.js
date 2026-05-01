@@ -3,6 +3,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import healthCheckRouter from './routes/healthCheck.routes.js'
 import authRouter from './routes/auth.routes.js'
+import projectRouter from './routes/project.routes.js'
 const app = express()
 
 
@@ -24,6 +25,8 @@ app.use(cors({
 app.use('/api/v1/healthcheck', healthCheckRouter)
 //auth route
 app.use('/api/v1/auth', authRouter)
+//project route
+app.use('/api/v1/projects', projectRouter)
 
 
 app.get('/', (req, res) => {
