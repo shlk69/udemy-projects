@@ -273,13 +273,13 @@ const deleteMember = asyncHandler(async (req, res) => {
     if (!projectMember) {
         throw new ApiError(404,'Project member not found')
     }
-    const projectMember = await ProjectMember.findByIdAndDelete(projectMember._id)
+    const isProjectMember = await ProjectMember.findByIdAndDelete(projectMember._id)
 
     if (!projectMember) {
         throw new ApiError(404,'Project member not found')
     }
 
-    return res.status(200).json(new ApiResponse(200,projectMember,'Project member deleted successfully'))
+    return res.status(200).json(new ApiResponse(200,isProjectMember,'Project member deleted successfully'))
 })
 
 
