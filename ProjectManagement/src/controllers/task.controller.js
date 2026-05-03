@@ -114,24 +114,24 @@ const getTaskById = asyncHandler(async (req, res) => {
                     {
                         $addFields: {
                             createdBy: {
-                              $arrayElemAt:['$createdBy',0]
-                          }
-                      }
+                                $arrayElemAt: ['$createdBy', 0]
+                            }
+                        }
                     }
                 ]
             }
         },
         {
             $addFields: {
-            assignedTo: {
-                $arrayElemAt:['$assignedTo',0]
-            }
+                assignedTo: {
+                    $arrayElemAt: ['$assignedTo', 0]
+                }
             }
         }
     ])
 
     if (!task || task.length === 0) throw new ApiError(404, 'Task not found')
-    
+
     return res
         .status(200)
         .json(
@@ -139,18 +139,86 @@ const getTaskById = asyncHandler(async (req, res) => {
                 200,
                 task[0],
                 'Task fetched successfully'
+            )
         )
-    )
 })
 
 
 const updateTask = asyncHandler(async (req, res) => {
+    const { taskId } = req.params
+    const isTask = await Task.findById(taskId)
+    if (!isTask) throw new ApiError(404, 'Task not found')
 
+    const allowedUpdates = [
+        "title",
+        "description",
+        "project",
+        "assignedTo"
+    ]
+    const updates = {}
+    for (let key of allowedUpdates) {
+        if (req.body[key] !== undefined) {
+            updates[key] = req.body
+        }
+    }
+
+    if (Object.keys(updates).length === 0 && !req.files) {
+        throw new ApiError('No valid fields to update')
+    }
+
+    if (updates.assignedTo) {
+        const user = await User.findById(updates.assignedTo)
+        if (!user) throw new ApiError(404, 'Assigned user not found')
+    }
+
+    if (req.files && req.files.length > 0) {
+        const attachments = files.map((file) => {
+            return {
+                url: `${process.env.SERVER_URL}/images/${file.originalname}`,
+                mimetype: file.mimetype,
+                size: file.size
+            }
+        })
+
+        updates.$push = {
+            attachment: { $each: newAttachments }
+        }
+    }
+
+    const updatedTask = await Task.findByIdAndUpdate(
+        id,
+        updates,
+        {
+            new: true,
+            runValidators:true
+        }
+    )
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                task,
+                'Task updated successfully'
+            )
+        )
 })
 
 
 const deleteTask = asyncHandler(async (req, res) => {
-
+    const { taskId } = req.params
+    const task = await Task.findByIdAndDelete(taskId)
+    if (!task) throw new ApiError(404, 'Task not found')
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                task,
+                'Task deleted successfully'
+            )
+        )
 })
 
 
