@@ -25,11 +25,10 @@ app.use(cookieParser())
 // import routes
 import healthCheckRoute from './routes/healthcheck.routes.js'
 import userRoutes from './routes/user.routes.js'
-import { registerUser } from './controllers/user.controllers.js'
 
 //routes
 app.use('/api/v1/healthcheck', healthCheckRoute)
-app.use('/api/v1/users', registerUser)
+app.use('/api/v1/users', userRoutes)
 
 
 
