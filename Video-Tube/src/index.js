@@ -7,11 +7,14 @@ dotenv.config({
 })
 
 const port = process.env.PORT || 3000
-connection().then(() => {
+const connectDb = connection().then(() => {
     app.listen(port, () => {
         console.log(`Server is runnning on ${port}`)
     })
 }).catch((err) => {
     console.log('Mongo db sync err')
 })
+
+
+export {connectDb}
 
