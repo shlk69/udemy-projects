@@ -4,7 +4,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 import { ApiError } from '../utils/ApiError.js'
 import { uploadOnCloudinary } from '../utils/cloudinary.js'
 import jwt from 'jsonwebtoken'
-import fs from "fs"
+import fs, { stat } from "fs"
 
 
 //Generate access and refresh token
@@ -168,8 +168,36 @@ const accessRefreshToken = asyncHandler(async (req, res) => {
     }
 })
 
+const logoutUser = asyncHandler(async (req, res) => {
+    await User.findByIdAndUpdate(req.user._id,
+        {
+            refreshToken:null
+        },
+        {
+            new:true
+        }
+    )
+
+    const options = {
+        httpOnly: true,
+        secure:process.env.NODE_ENV === 'production'
+    }
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(new ApiResponse(
+            200,
+            {},
+            'User logged out successfully'
+    ))
+    
+})
+
 export {
     registerUser,
     loginUser,
-
+    accessRefreshToken,
+    logoutUser
 }
